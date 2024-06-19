@@ -14,39 +14,40 @@ from DSGRN_sheaves.SearchBifurcations import *
 from DSGRN_sheaves.PlotAttractorSheaf import *
 from DSGRN_sheaves.CechCell import *
 
-def saddle_node_query(parameter_graph, param_stability=None):
+class SaddleNodeQuery(BifurcationQuery):
 
-    if param_stability is None:
-        param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
-    
-    vertices = ['a','b']
-    edges = [('a','b')]
-    match_grading = {1 : ['a'], 2 : ['b']}
-    coho_criteria = [{
-                      'predicate' : lambda sc : len(sc[0]) == 2,
-                      'dim' : 1,
-                      'clean_stalks' : True
-                     }]
+    def __init__(self, parameter_graph, param_stability=None):
+        if param_stability is None:
+            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+        
+        vertices = ['a','b']
+        edges = [('a','b')]
+        match_grading = {1 : ['a'], 2 : ['b']}
+        coho_criteria = [{
+                          'predicate' : lambda sc : len(sc[0]) == 2,
+                          'dim' : 1,
+                          'clean_stalks' : True
+                         }]
+        super().__init__(parameter_graph, vertices, edges, 
+                         param_stability, match_grading, coho_criteria)
 
-    return BifurcationQuery(parameter_graph, vertices, edges, param_stability,
-                            match_grading, coho_criteria)
+class PitchforkQuery(BifurcationQuery):
 
-def pitchfork_query(parameter_graph, param_stability=None):
+    def __init__(self, parameter_graph, param_stability=None):
+        if param_stability is None:
+            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+        
+        vertices = ['a','b']
+        edges = [('a','b')]
+        match_grading = {1 : ['a'], 2 : ['b']}
+        coho_criteria = [{
+                          'predicate' : lambda sc : len(sc[0]) == 1,
+                          'dim' : 1,
+                          'clean_stalks' : True
+                         }]
+        super().__init__(parameter_graph, vertices, edges, 
+                         param_stability, match_grading, coho_criteria)
 
-    if param_stability is None:
-        param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
-    
-    vertices = ['a','b']
-    edges = [('a','b')]
-    match_grading = {1 : ['a'], 2 : ['b']}
-    coho_criteria = [{
-                      'predicate' : lambda sc : len(sc[0]) == 1,
-                      'dim' : 1,
-                      'clean_stalks' : True
-                     }]
-
-    return BifurcationQuery(parameter_graph, vertices, edges, param_stability,
-                            match_grading, coho_criteria)
 
 class HysteresisQuery(BifurcationQuery):
 
@@ -83,102 +84,88 @@ class IsolaQuery(BifurcationQuery):
         super().__init__(parameter_graph, vertices, edges, 
                          param_stability, match_grading, coho_criteria)
 
-# def isola_query(parameter_graph, param_stability=None):
+class CuspQuery(BifurcationQuery):
 
-#     if param_stability is None:
-#         param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+    def __init__(self, parameter_graph, param_stability=None):
+        if param_stability is None:
+            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
     
-#     vertices = ['a','b','c']
-#     edges = [('a','b'), ('b','c')]
-#     match_grading = {1 : ['a','c'], 2 : ['b']}
-#     coho_criteria = [{
-#                       'predicate' : lambda sc : len(sc[0]) == 2,
-#                       'dim' : 1,
-#                       'clean_stalks' : True
-#                      }]
+        vertices = ['a','b','c','d']
+        edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
+        match_grading = {1 : ['a','b','c'], 2 : ['d']}
+        coho_criteria = [{
+                          'predicate' : lambda sc : len(sc[0]) == 1,
+                          'dim' : 1,
+                          'clean_stalks' : True
+                         }]
+        
+        super().__init__(parameter_graph, vertices, edges, 
+                         param_stability, match_grading, coho_criteria)
 
-#     return BifurcationQuery(parameter_graph, vertices, edges, param_stability,
-#                             match_grading, coho_criteria)
+class IsolaLoopQuery(BifurcationQuery):
 
-def cusp_query(parameter_graph, param_stability=None):
+    def __init__(self, parameter_graph, param_stability=None):
+        if param_stability is None:
+            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+    
+        vertices = ['a','b','c','d']
+        edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
+        match_grading = {1 : ['a','b','c'], 2 : ['d']}
+        coho_criteria = [{
+                          'predicate' : lambda sc : len(sc[0]) == 2,
+                          'dim' : 1,
+                          'clean_stalks' : True
+                         }]
+        
+        super().__init__(parameter_graph, vertices, edges, 
+                         param_stability, match_grading, coho_criteria)
 
-    if param_stability is None:
-        param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+class SwallowtailQuery(BifurcationQuery):
 
-    vertices = ['a','b','c','d']
-    edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
-    match_grading = {1 : ['a','b','c'], 2 : ['d']}
-    coho_criteria = [{
-                      'predicate' : lambda sc : len(sc[0]) == 1,
-                      'dim' : 1,
-                      'clean_stalks' : True
-                     }]
+    def __init__(self, parameter_graph, param_stability=None):
+        if param_stability is None:
+            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
+    
+        vertices = ['a','b','c','d','e','f','g','h']
+        edges = [('a','b'),('a','c'),('c','d'),('b','d'),
+                 ('e','f'),('e','g'),('g','h'),('f','h'),
+                 ('a','e'),('b','f'),('c','g'),('d','h')]
+        match_grading = {1 : ['b'], 2 : ['a','c','d','e','f','g'], 3 : ['h']}
+        coho_criteria = [
+                         {'selection' : ['b','d','f','h'],
+                          'predicate' : lambda sc : len(sc[0]) == 3 
+                                                    and len(sc[1]) == 3, #bisolas
+                          'dim' : 1,
+                          'clean_stalks' : True}, 
+                         {'selection' : ['a','c','e','g'], 
+                          'predicate' : lambda sc : len(sc[0]) == 3 
+                                                    and len(sc[1]) == 3, #stable
+                          'dim' : 1,
+                          'clean_stalks' : True}, 
+                         {'selection' : ['c','d','g','h'], 
+                          'predicate' : lambda sc : len(sc[0]) == 3 
+                                                    and len(sc[1]) == 3, #cusp
+                          'dim' : 1,
+                          'clean_stalks' : True}, 
+                         {'selection' : ['e','f','g','h'],
+                          'predicate' : lambda sc : len(sc[0]) == 3 
+                                                    and len(sc[1]) == 3, #cusp
+                          'dim' : 1,
+                          'clean_stalks' : True}, 
+                         {'selection' : ['a','b','c','d'],
+                          'predicate' : lambda sc : len(sc[0]) == 2 
+                                                    and len(sc[1]) == 2, #isola
+                          'dim' : 1,
+                          'clean_stalks' : True}, 
+                         {'selection' : ['a','b','e','f'], 
+                          'predicate' : lambda sc : len(sc[0]) == 2 
+                                                    and len(sc[1]) == 2, #isola
+                          'dim' : 1,
+                          'clean_stalks' : True}                 
+                        ]
 
-    return BifurcationQuery(parameter_graph, vertices, edges, param_grading,
-                            match_grading, coho_criteria)
-
-def isola_loop_query(parameter_graph, param_stability=None):
-
-    if param_stability is None:
-        param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
-
-    vertices = ['a','b','c','d']
-    edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
-    match_grading = {1 : ['a','b','c'], 2 : ['d']}
-    coho_criteria = [{
-                      'predicate' : lambda sc : len(sc[0]) == 2,
-                      'dim' : 1,
-                      'clean_stalks' : True
-                     }]
-
-    return BifurcationQuery(parameter_graph, vertices, edges, param_grading,
-                            match_grading, coho_criteria)
-
-def swallowtail_query(parameter_graph, param_stability):
-
-    if param_stability is None:
-        param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network)
-
-    vertices = ['a','b','c','d','e','f','g','h']
-    edges = [('a','b'),('a','c'),('c','d'),('b','d'),
-             ('e','f'),('e','g'),('g','h'),('f','h'),
-             ('a','e'),('b','f'),('c','g'),('d','h')]
-    match_grading = {1 : ['b'], 2 : ['a','c','d','e','f','g'], 3 : ['h']}
-    coho_criteria = [
-                     {'selection' : ['b','d','f','h'],
-                      'predicate' : lambda sc : len(sc[0]) == 3 
-                                                and len(sc[1]) == 3, #bisolas
-                      'dim' : 1,
-                      'clean_stalks' : True}, 
-                     {'selection' : ['a','c','e','g'], 
-                      'predicate' : lambda sc : len(sc[0]) == 3 
-                                                and len(sc[1]) == 3, #stable
-                      'dim' : 1,
-                      'clean_stalks' : True}, 
-                     {'selection' : ['c','d','g','h'], 
-                      'predicate' : lambda sc : len(sc[0]) == 3 
-                                                and len(sc[1]) == 3, #cusp
-                      'dim' : 1,
-                      'clean_stalks' : True}, 
-                     {'selection' : ['e','f','g','h'],
-                      'predicate' : lambda sc : len(sc[0]) == 3 
-                                                and len(sc[1]) == 3, #cusp
-                      'dim' : 1,
-                      'clean_stalks' : True}, 
-                     {'selection' : ['a','b','c','d'],
-                      'predicate' : lambda sc : len(sc[0]) == 2 
-                                                and len(sc[1]) == 2, #isola
-                      'dim' : 1,
-                      'clean_stalks' : True}, 
-                     {'selection' : ['a','b','e','f'], 
-                      'predicate' : lambda sc : len(sc[0]) == 2 
-                                                and len(sc[1]) == 2, #isola
-                      'dim' : 1,
-                      'clean_stalks' : True}                 
-                    ]
-
-    return BifurcationQuery(parameter_graph, vertices, edges, param_grading,
-                            match_grading, coho_criteria)
+        super().__init__(parameter_graph, vertices, edges, 
+                         param_stability, match_grading, coho_criteria)
 
 def general_hysteresis_query(parameter_graph, length, param_stability=None):
     
