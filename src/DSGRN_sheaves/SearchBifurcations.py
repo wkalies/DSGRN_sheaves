@@ -11,6 +11,12 @@ import math
 import time
 import sys
 
+try:
+    from multiprocess import Pool
+    has_multiprocess = True
+except ImportError:
+    has_multiprocess = False
+
 from DSGRN_sheaves.Sheaf import *
 from DSGRN_sheaves.Cohomology import *
 from DSGRN_sheaves.Continuation import *
@@ -129,11 +135,9 @@ def matching(parameter_graph, G, param_grading, match_grading, symmetry=False):
         for path in valid_paths:
             if all([set(path) != set(p) for p in smashed]):
                 smashed.append(path)
-        print("Graph matching took",str(round(stop-start,2)),"seconds. Found",
-              str(len(smashed)),"graph matches.")
+        print(f"Graph matching took {stop-start:.2f} seconds. Found {len(smashed)} graph matches.")
         return smashed, ordering
-    print("Graph matching took",str(round(stop-start,2)),"seconds. Found ",
-              str(len(valid_paths))," graph matches.")
+    print(f"Graph matching took {stop-start:.2f} seconds. Found {len(valid_paths)} graph matches.")
     return valid_paths, ordering
 
 def select_from_match(match, selection, ordering):
@@ -204,11 +208,48 @@ class BifurcationQuery:
         
         return check, cohomologies
 
+    def find_shape_matches(self):
+        self.shape_matches, self.ordering = matching(self.parameter_graph,
+                                                     self.match_graph,
+                                                     self.param_grading,
+                                                     self.match_grading)
+
     def execute(self):
         """ Returns all subgraphs of the parameter graph which are isomorphic 
             to the query's match graph, and satisfy the query's cohomology 
             conditions. """
 
+        if self.shape_matches is None:
+            self.find_shape_matches()
+        matches = []
+        coho_list = []
+        n = 0
+        start = time.time()
+        total = min(self.cap,len(self.shape_matches))
+        for match in self.shape_matches:
+            n = n+1
+            
+            sys.stdout.write(f"\rEvaluating sheaf criteria. {n/total:.1%} complete.")
+            
+            check, cohomologies = self.check_cohomology(match, self.ordering)
+            if check:
+                matches.append(match)
+                coho_list.append(cohomologies)
+            if n >= total:
+                break
+        stop = time.time()
+
+        print(f"\nEvaluating sheaf criteria took {stop-start:.2f} seconds.")
+        print(f"\nFound {len(matches)} matches!")
+        return matches, coho_list
+
+    def check_match(self, match):
+        return self.check_cohomology(match, self.ordering)[0]
+
+    def multi_execute(self, processes=1):
+        if not has_multiprocess:
+            return self.execute()
+        
         if self.shape_matches is None:
             self.shape_matches, self.ordering = matching(self.parameter_graph,
                                                          self.match_graph,
@@ -219,28 +260,20 @@ class BifurcationQuery:
         n = 0
         start = time.time()
         total = min(self.cap,len(self.shape_matches))
-        for match in self.shape_matches:
-            n = n+1
-            txt = (("\rEvaluating sheaf criteria "
-                    + "on graph match {current} of {total}." 
-                    + "   {percent}% complete.")
-                   .format(current = n, total = total, 
-                           percent = math.floor(n/total*100)))
-            sys.stdout.write(txt)
-            sys.stdout.flush()
-            
-            check, cohomologies = self.check_cohomology(match, self.ordering)
-            if check:
-                matches.append(match)
-                coho_list.append(cohomologies)
-            if n >= total:
-                break
+
+        with Pool(processes=processes) as pool:
+            results = pool.imap_unordered(self.check_match, self.shape_matches[:total])
+            for i, result in enumerate(results, 1):
+                sys.stdout.write(f"\rEvaluating sheaf criteria. {i/total:.1%} complete.")
+                if result:
+                    matches.append(self.shape_matches[i-1])
+
         stop = time.time()
 
-        print("\nEvaluating sheaf criteria took",
-              str(round(stop-start,2)),"seconds.")
-        print("\nFound "+str(len(matches))+" matches!")
-        return matches, coho_list
+        print(f"\nEvaluating sheaf criteria took {stop-start:.2f} seconds.")
+        print(f"\nFound {len(matches)} matches!")
+        return matches
+        
 
     def __init__(self, parameter_graph, vertices, edges, param_grading={}, 
                  match_grading={}, coho_criteria=[], cap=math.inf, 

@@ -17,7 +17,7 @@ setuptools.setup(
     url="https://github.com/AlexDowling/DSGRN_sheaves",
     package_dir={'':'src'},
     packages=['DSGRN_sheaves'],
-    install_requires=["DSGRN", "pyCHomP2", "DSGRN_utils", "galois"],
+    install_requires=["DSGRN", "pyCHomP2", "DSGRN_utils", "galois", "multiprocess"],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",

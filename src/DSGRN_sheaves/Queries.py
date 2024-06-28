@@ -12,7 +12,7 @@ from DSGRN_sheaves.Cohomology import *
 from DSGRN_sheaves.Continuation import *
 from DSGRN_sheaves.Attractors import *
 from DSGRN_sheaves.SearchBifurcations import *
-from DSGRN_sheaves.PlotAttractorSheaf import *
+from DSGRN_sheaves.ParameterComplexFigure import *
 from DSGRN_sheaves.CechCell import *
 
 class SaddleNodeQuery(BifurcationQuery):
@@ -203,7 +203,8 @@ class GeneralHysteresisQuery(BifurcationQuery):
             row = row + len(shf.stalk(cell))
         return row_slices
 
-    def build_total_restriction(self, sheaf_data, c_sheaf_data, row_slices):
+    def build_total_restriction(self, sheaf_data, c_sheaf_data, row_slices, 
+                                l_edge_cell, r_edge_cell):
         pc, stg_dict, shf, shf_cohomology, rank = sheaf_data
         c_pc, c_stg_dict, c_shf, c_shf_cohomology, c_rank = c_sheaf_data
         
@@ -213,18 +214,18 @@ class GeneralHysteresisQuery(BifurcationQuery):
         for cell in shf.grading[0]:
             if len(shf.P.children(cell)) < 2:
                 pass            
-            elif self.l_edge_cell in shf.P.children(cell):
+            elif l_edge_cell in shf.P.children(cell):
                 c_edge_cell = next(c for c in shf.P.children(cell) 
-                                   if c != self.l_edge_cell)
+                                   if c != l_edge_cell)
                 target_cell = CechCell(c_edge_cell.inequality_sets, 0, 
                                        c_edge_cell.labels)
                 R = morse_restriction(shf.stalk(cell), 
                                       c_shf.stalk(target_cell))
                 col_slice = slice(col, col+len(shf.stalk(cell)))
                 R_tc[row_slices[target_cell], col_slice] = R
-            elif self.r_edge_cell in shf.P.children(cell):
+            elif r_edge_cell in shf.P.children(cell):
                 c_edge_cell = next(c for c in shf.P.children(cell) 
-                                   if c != self.r_edge_cell)
+                                   if c != r_edge_cell)
                 target_cell = CechCell(c_edge_cell.inequality_sets, 0, 
                                        c_edge_cell.labels)
                 if self.length == 3:
@@ -242,7 +243,8 @@ class GeneralHysteresisQuery(BifurcationQuery):
 
         return R_tc
 
-    def build_left_restriction(self, l_sheaf_data, c_sheaf_data, row_slices):
+    def build_left_restriction(self, l_sheaf_data, c_sheaf_data, row_slices, 
+                               l_edge_cell):
         l_pc, l_stg_dict, l_shf, l_shf_cohomology, l_rank = l_sheaf_data
         c_pc, c_stg_dict, c_shf, c_shf_cohomology, c_rank = c_sheaf_data
         
@@ -250,17 +252,17 @@ class GeneralHysteresisQuery(BifurcationQuery):
             
         col = 0
         for cell in l_shf.grading[0]:
-            if (self.l_edge_cell in l_shf.P.children(cell) 
+            if (l_edge_cell in l_shf.P.children(cell) 
                 and len(l_shf.P.children(cell)) > 1):
                 c_edge_cell = next(c for c in l_shf.P.children(cell) 
-                                   if c != self.l_edge_cell)
+                                   if c != l_edge_cell)
                 target_cell = CechCell(c_edge_cell.inequality_sets, 0, 
                                        c_edge_cell.labels)
                 R = morse_restriction(l_shf.stalk(cell), 
                                       c_shf.stalk(target_cell))
                 col_slice = slice(col, col+len(l_shf.stalk(cell)))
                 R_lc[row_slices[target_cell], col_slice] = R
-            elif self.l_edge_cell not in l_shf.P.children(cell):
+            elif l_edge_cell not in l_shf.P.children(cell):
                 target_cell = cell
                 if self.length == 3:
                     target_cell = self.dummy
@@ -272,17 +274,18 @@ class GeneralHysteresisQuery(BifurcationQuery):
 
         return R_lc
 
-    def build_right_restriction(self, r_sheaf_data, c_sheaf_data, row_slices):
+    def build_right_restriction(self, r_sheaf_data, c_sheaf_data, row_slices, 
+                                r_edge_cell):
         r_pc, r_stg_dict, r_shf, r_shf_cohomology, r_rank = r_sheaf_data
         c_pc, c_stg_dict, c_shf, c_shf_cohomology, c_rank = c_sheaf_data
         
         R_rc = r_shf.GF([[0 for j in range(r_rank)] for i in range(c_rank)])
         col = 0
         for cell in r_shf.grading[0]:
-            if (self.r_edge_cell in r_shf.P.children(cell) 
+            if (r_edge_cell in r_shf.P.children(cell) 
                 and len(r_shf.P.children(cell))) > 1:
                 c_edge_cell = next(c for c in r_shf.P.children(cell) 
-                                   if c != self.r_edge_cell)
+                                   if c != r_edge_cell)
                 target_cell = CechCell(c_edge_cell.inequality_sets, 0, 
                                        c_edge_cell.labels)
                 if self.length == 3:
@@ -291,7 +294,7 @@ class GeneralHysteresisQuery(BifurcationQuery):
                                       c_shf.stalk(target_cell))
                 col_slice = slice(col, col+len(r_shf.stalk(cell)))
                 R_rc[row_slices[target_cell], col_slice] = R
-            elif self.r_edge_cell not in r_shf.P.children(cell):
+            elif r_edge_cell not in r_shf.P.children(cell):
                 target_cell = cell
                 R = r_shf.GF(np.eye(len(r_shf.stalk(cell))).astype(int))
                 col_slice = slice(col, col+len(r_shf.stalk(cell)))
@@ -334,8 +337,8 @@ class GeneralHysteresisQuery(BifurcationQuery):
         r_match = match[:-2] + [match[-1]]
         c_match = match[:-2]
 
-        self.l_edge_cell = top_cech_cell(self.parameter_graph, match[-2], 1)
-        self.r_edge_cell = top_cech_cell(self.parameter_graph, match[-1], 1)
+        l_edge_cell = top_cech_cell(self.parameter_graph, match[-2], 1)
+        r_edge_cell = top_cech_cell(self.parameter_graph, match[-1], 1)
 
         sheaf_data = self.build_sheaf_data(match)
         pc, stg_dict, shf, shf_cohomology, rank = sheaf_data
@@ -358,11 +361,11 @@ class GeneralHysteresisQuery(BifurcationQuery):
         row_slices = self.build_slices(c_shf)
 
         R_tc = self.build_total_restriction(sheaf_data, c_sheaf_data, 
-                                            row_slices)
+                                            row_slices, l_edge_cell, r_edge_cell)
         R_lc = self.build_left_restriction(l_sheaf_data, c_sheaf_data,
-                                           row_slices)
+                                           row_slices, l_edge_cell)
         R_rc = self.build_right_restriction(r_sheaf_data, c_sheaf_data,
-                                            row_slices)
+                                            row_slices, r_edge_cell)
         
         return any(self.check_section(section, att_secs, c_att_secs, R_tc, 
                                       R_lc, R_rc, K_l, K_r) 
