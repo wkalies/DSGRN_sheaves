@@ -6,9 +6,9 @@ import DSGRN_utils
 import pychomp
 import itertools
 
-from DSGRN_sheaves.Sheaf import *
-from DSGRN_sheaves.Cohomology import *
-from DSGRN_sheaves.CechCell import *
+from .Sheaf import *
+from .Cohomology import *
+from .CechCell import *
 
 class Interrupt(Exception):
     pass

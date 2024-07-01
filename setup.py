@@ -1,4 +1,4 @@
-### __setup__.py
+### setup.py
 ### MIT LICENSE 2024 Alex Dowling
 
 import setuptools
@@ -16,8 +16,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/AlexDowling/DSGRN_sheaves",
     package_dir={'':'src'},
-    packages=['DSGRN_sheaves'],
-    install_requires=["DSGRN", "pyCHomP2", "DSGRN_utils", "galois", "multiprocess"],
+    packages=setuptools.find_packages(where='src'),
+    install_requires=["DSGRN", "pyCHomP2", "DSGRN_utils", 
+                      "galois", "multiprocess"],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",

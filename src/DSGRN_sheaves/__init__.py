@@ -5,11 +5,11 @@ import DSGRN
 import DSGRN_utils
 import pychomp
 
-from DSGRN_sheaves.Cohomology import *
-from DSGRN_sheaves.Sheaf import *
-from DSGRN_sheaves.Continuation import *
-from DSGRN_sheaves.SearchBifurcations import *
-from DSGRN_sheaves.ParameterComplexFigure import *
-from DSGRN_sheaves.Attractors import *
-from DSGRN_sheaves.Queries import *
-from DSGRN_sheaves.CechCell import *
+from .Cohomology import *
+from .Sheaf import *
+from .Continuation import *
+from .SearchBifurcations import *
+from .ParameterComplexFigure import *
+from .Attractors import *
+from .Queries import *
+from .CechCell import *

@@ -17,9 +17,9 @@ try:
 except ImportError:
     has_multiprocess = False
 
-from DSGRN_sheaves.Sheaf import *
-from DSGRN_sheaves.Cohomology import *
-from DSGRN_sheaves.Continuation import *
+from .Sheaf import *
+from .Cohomology import *
+from .Continuation import *
 
 def greatest_constraint_first(G, grading):
     """ Greedy algorithm which returns an ordering on the vertices of a given 
@@ -128,16 +128,14 @@ def matching(parameter_graph, G, param_grading, match_grading, symmetry=False):
             valid_paths.append(path)
     
     traverse_search_tree(root, -1, [])
-    stop = time.time()
     
     if not symmetry:
-        smashed = []
-        for path in valid_paths:
-            if all([set(path) != set(p) for p in smashed]):
-                smashed.append(path)
-        print(f"Graph matching took {stop-start:.2f} seconds. Found {len(smashed)} graph matches.")
-        return smashed, ordering
-    print(f"Graph matching took {stop-start:.2f} seconds. Found {len(valid_paths)} graph matches.")
+        valid_sets = {frozenset(path):path for path in valid_paths}
+        valid_paths = list(valid_sets.values())
+
+    stop = time.time()
+    print(f"Graph matching took {stop-start:.2f} seconds. "\
+          f"Found {len(valid_paths)} graph matches.")
     return valid_paths, ordering
 
 def select_from_match(match, selection, ordering):
@@ -215,7 +213,7 @@ class BifurcationQuery:
                                                      self.match_grading)
 
     def execute(self):
-        """ Returns all subgraphs of the parameter graph which are isomorphic 
+        """ Returns all subgraphs of the parameter graph which are isomorphic
             to the query's match graph, and satisfy the query's cohomology 
             conditions. """
 
@@ -229,7 +227,9 @@ class BifurcationQuery:
         for match in self.shape_matches:
             n = n+1
             
-            sys.stdout.write(f"\rEvaluating sheaf criteria. {n/total:.1%} complete.")
+            sys.stdout.write(f"\rEvaluating sheaf criteria. "
+                             f"{n/total:.1%} complete.")
+            
             
             check, cohomologies = self.check_cohomology(match, self.ordering)
             if check:
@@ -243,10 +243,7 @@ class BifurcationQuery:
         print(f"\nFound {len(matches)} matches!")
         return matches, coho_list
 
-    def check_match(self, match):
-        return self.check_cohomology(match, self.ordering)[0]
-
-    def multi_execute(self, processes=1):
+    def multi_execute(self, processes=8):
         if not has_multiprocess:
             return self.execute()
         
@@ -256,17 +253,21 @@ class BifurcationQuery:
                                                          self.param_grading,
                                                          self.match_grading)
         matches = []
-        coho_list = []
-        n = 0
         start = time.time()
         total = min(self.cap,len(self.shape_matches))
 
+        def check_match(match):
+            return match, self.check_cohomology(match, 
+                                                self.ordering)[0]
+
         with Pool(processes=processes) as pool:
-            results = pool.imap_unordered(self.check_match, self.shape_matches[:total])
-            for i, result in enumerate(results, 1):
-                sys.stdout.write(f"\rEvaluating sheaf criteria. {i/total:.1%} complete.")
+            results = pool.imap_unordered(check_match, 
+                                          self.shape_matches[:total])
+            for i, (match, result) in enumerate(results):
+                sys.stdout.write(f"\rEvaluating sheaf criteria. "\
+                                 f"{i/total:.1%} complete.")
                 if result:
-                    matches.append(self.shape_matches[i-1])
+                    matches.append(match)
 
         stop = time.time()
 

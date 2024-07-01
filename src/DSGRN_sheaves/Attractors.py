@@ -6,22 +6,23 @@ import numpy as np
 import pychomp
 import DSGRN_utils
 
-from DSGRN_sheaves.Sheaf import *
+from .Sheaf import *
 
 def morse_dictionary(parameter_complex, stg_dict, prune_grad='none'):
+    dim = max(cell.dim for cell in parameter_complex.vertices())
     morse_dict = {}
-    for key in parameter_complex.vertices():
-        stg = stg_dict[key]
-        (scc_dag, graded_complex) = pychomp.FlowGradedComplex(stg.complex(), 
-                                                              stg.adjacencies())
-        connection_matrix = pychomp.ConnectionMatrix(graded_complex)
-        if prune_grad == 'all' or (prune_grad == 'some' and key[-1] == dim):
-            morse_graph = DSGRN_utils.MorseGraph(stg, scc_dag, graded_complex, 
+    for cell in parameter_complex.vertices():
+        stg = stg_dict[cell]
+        (scc_dag, graded_comp) = pychomp.FlowGradedComplex(stg.complex(), 
+                                                           stg.adjacencies())
+        connection_matrix = pychomp.ConnectionMatrix(graded_comp)
+        if prune_grad == 'all' or (prune_grad == 'some' and cell.dim == dim):
+            morse_graph = DSGRN_utils.MorseGraph(stg, scc_dag, graded_comp, 
                                                  connection_matrix)
         else:
-            morse_graph = DSGRN_utils.MorseGraph(stg, scc_dag, graded_complex, 
+            morse_graph = DSGRN_utils.MorseGraph(stg, scc_dag, graded_comp, 
                                                  connection_matrix, False)
-        morse_dict.update({key : morse_graph})
+        morse_dict.update({cell : morse_graph})
     return morse_dict
 
 def morse_sets_in_section(shf, morse_dict, section):

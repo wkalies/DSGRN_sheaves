@@ -8,16 +8,16 @@ import math
 import galois
 import itertools
 
-from DSGRN_sheaves.Sheaf import *
-from DSGRN_sheaves.Continuation import *
+from .Sheaf import *
+from .Continuation import *
 
 import matplotlib
 import matplotlib.pyplot as plt
 
-def plot_stg(stg, morse_nodes=None, plot_bdry_cells=True, prune_grad=False, 
+def plot_stg(stg, morse_nodes=None, plot_bdry_cells=True, prune_grad=False,
              ax=None, label=None, figsize=(7,7), fname=None, visible=True):
-    """ Inputs a RookRulesCubicalComplex object. Builds matplotlib figure which 
-        shows the Morse sets and state transition graph. """
+    """ Inputs a CubicalBlowupGraph object. Builds matplotlib figure 
+        which shows the Morse sets and state transition graph. """
     
     (scc_dag, graded_complex) = pychomp.FlowGradedComplex(
                                         stg.complex(), 
@@ -217,7 +217,7 @@ class SheafFigure(ParameterComplexFigure):
         
         for cell, v in assignment.items():
             self.morse_nodes.update({cell : [i for i, vi in enumerate(v) 
-                                             if vi != 0]}) 
+                                             if vi != 0]})
 
     def plot_cell(self, cell, ax):
         stg = self.stg_dict[cell]

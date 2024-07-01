@@ -7,13 +7,13 @@ from numpy.linalg import matrix_rank
 import time
 import sys
 
-from DSGRN_sheaves.Sheaf import *
-from DSGRN_sheaves.Cohomology import *
-from DSGRN_sheaves.Continuation import *
-from DSGRN_sheaves.Attractors import *
-from DSGRN_sheaves.SearchBifurcations import *
-from DSGRN_sheaves.ParameterComplexFigure import *
-from DSGRN_sheaves.CechCell import *
+from .Sheaf import *
+from .Cohomology import *
+from .Continuation import *
+from .Attractors import *
+from .SearchBifurcations import *
+from .ParameterComplexFigure import *
+from .CechCell import *
 
 class SaddleNodeQuery(BifurcationQuery):
 
