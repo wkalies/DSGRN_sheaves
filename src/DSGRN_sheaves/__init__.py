@@ -13,4 +13,4 @@ from .ParameterComplexFigure import *
 from .Attractors import *
 from .CechCell import *
 
-from Queries import *
+from .Queries import *
