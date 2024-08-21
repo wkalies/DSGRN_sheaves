@@ -1,173 +1,15 @@
 import DSGRN
 import DSGRN_utils
-import math
 import numpy as np
 import galois
 from numpy.linalg import matrix_rank
-import time
-import sys
 
-from .Sheaf import *
-from .Cohomology import *
-from .Continuation import *
-from .Attractors import *
-from .SearchBifurcations import *
-from .ParameterComplexFigure import *
-from .CechCell import *
-
-class SaddleNodeQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-        
-        vertices = ['a','b']
-        edges = [('a','b')]
-        match_grading = {1 : ['a'], 2 : ['b']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 2,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-class PitchforkQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-        
-        vertices = ['a','b']
-        edges = [('a','b')]
-        match_grading = {1 : ['a'], 2 : ['b']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 1,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-
-class HysteresisQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-        
-        vertices = ['a','b','c']
-        edges = [('a','b'), ('b','c')]
-        match_grading = {1 : ['a','c'], 2 : ['b']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 1,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]    
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-class IsolaQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-        
-        vertices = ['a','b','c']
-        edges = [('a','b'), ('b','c')]
-        match_grading = {1 : ['a','c'], 2 : ['b']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 2,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]    
-        
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-class CuspQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-    
-        vertices = ['a','b','c','d']
-        edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
-        match_grading = {1 : ['a','b','c'], 2 : ['d']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 1,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]
-        
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-class IsolaLoopQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-    
-        vertices = ['a','b','c','d']
-        edges = [('a','b'), ('b','c'), ('c','d'), ('a','d')]
-        match_grading = {1 : ['a','b','c'], 2 : ['d']}
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 2,
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }]
-        
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-
-class SwallowtailQuery(BifurcationQuery):
-
-    def __init__(self, parameter_graph, param_stability=None):
-        if param_stability is None:
-            param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
-    
-        vertices = ['a','b','c','d','e','f','g','h']
-        edges = [('a','b'),('a','c'),('c','d'),('b','d'),
-                 ('e','f'),('e','g'),('g','h'),('f','h'),
-                 ('a','e'),('b','f'),('c','g'),('d','h')]
-        match_grading = {1 : ['b'], 2 : ['a','c','d','e','f','g'], 3 : ['h']}
-        coho_criteria = [
-                         {'selection' : ['b','d','f','h'],
-                          'predicate' : lambda sc : len(sc[0]) == 3 
-                                                    and len(sc[1]) == 3, #bisolas
-                          'dim' : 1,
-                          'clean_stalks' : True}, 
-                         {'selection' : ['a','c','e','g'], 
-                          'predicate' : lambda sc : len(sc[0]) == 3 
-                                                    and len(sc[1]) == 3, #stable
-                          'dim' : 1,
-                          'clean_stalks' : True}, 
-                         {'selection' : ['c','d','g','h'], 
-                          'predicate' : lambda sc : len(sc[0]) == 3 
-                                                    and len(sc[1]) == 3, #cusp
-                          'dim' : 1,
-                          'clean_stalks' : True}, 
-                         {'selection' : ['e','f','g','h'],
-                          'predicate' : lambda sc : len(sc[0]) == 3 
-                                                    and len(sc[1]) == 3, #cusp
-                          'dim' : 1,
-                          'clean_stalks' : True}, 
-                         {'selection' : ['a','b','c','d'],
-                          'predicate' : lambda sc : len(sc[0]) == 2 
-                                                    and len(sc[1]) == 2, #isola
-                          'dim' : 1,
-                          'clean_stalks' : True}, 
-                         {'selection' : ['a','b','e','f'], 
-                          'predicate' : lambda sc : len(sc[0]) == 2 
-                                                    and len(sc[1]) == 2, #isola
-                          'dim' : 1,
-                          'clean_stalks' : True}                 
-                        ]
-
-        super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
-        
+from ..Sheaf import *
+from ..Cohomology import *
+from ..Continuation import *
+from ..Attractors import *
+from .BifurcationQuery import *
+from ..CechCell import *
 
 class GeneralHysteresisQuery(BifurcationQuery):
 
@@ -342,12 +184,12 @@ class GeneralHysteresisQuery(BifurcationQuery):
 
         sheaf_data = self.build_sheaf_data(match)
         pc, stg_dict, shf, shf_cohomology, rank = sheaf_data
-        morse_dict = morse_dictionary(pc, stg_dict)
+        morse_dict = build_morse_dict(pc, stg_dict)
         att_secs = attractor_sections(shf, morse_dict)
 
         c_sheaf_data = self.build_sheaf_data(c_match)
         c_pc, c_stg_dict, c_shf, c_shf_cohomology, c_rank = c_sheaf_data
-        c_morse_dict = morse_dictionary(c_pc, c_stg_dict)
+        c_morse_dict = build_morse_dict(c_pc, c_stg_dict)
         c_att_secs = attractor_sections(c_shf, c_morse_dict)
 
         l_sheaf_data = self.build_sheaf_data(l_match)

@@ -14,7 +14,7 @@ from .Continuation import *
 import matplotlib
 import matplotlib.pyplot as plt
 
-def plot_stg(stg, morse_nodes=None, plot_bdry_cells=True, prune_grad=False,
+def plot_stg(stg, morse_sets=None, plot_bdry_cells=True, prune_grad=False,
              ax=None, label=None, figsize=(7,7), fname=None, visible=True):
     """ Inputs a CubicalBlowupGraph object. Builds matplotlib figure 
         which shows the Morse sets and state transition graph. """
@@ -25,6 +25,14 @@ def plot_stg(stg, morse_nodes=None, plot_bdry_cells=True, prune_grad=False,
     connection_matrix = pychomp.ConnectionMatrix(graded_complex)
     morse_graph = DSGRN_utils.MorseGraph(stg, scc_dag, graded_complex, 
                                          connection_matrix, prune_grad)
+    if morse_sets is not None:
+        all_morse_sets = [frozenset({c for c in stg.digraph.vertices() 
+                                     if graded_complex.value(c) == M}) 
+                          for M in morse_graph.vertices()]
+        morse_nodes = [all_morse_sets.index(M) for M in morse_sets]
+    else:
+        morse_nodes = None
+    
     saveable = False
     if not ax:
         fig, ax = plt.subplots(figsize=figsize)
@@ -211,13 +219,14 @@ class SheafFigure(ParameterComplexFigure):
                                                           assignment[cell_0])
         return assignment
 
-    def build_morse_nodes(self, section):
+    def build_section_dict(self, section):
         assignment = self.propagate_section(section)
-        self.morse_nodes = {}
+        self.section_dict = {}
         
         for cell, v in assignment.items():
-            self.morse_nodes.update({cell : [i for i, vi in enumerate(v) 
-                                             if vi != 0]})
+            morse_sets = [M for M, vi in zip(self.shf.stalk(cell), v)
+                          if vi != 0]
+            self.section_dict.update({cell : morse_sets})
 
     def plot_cell(self, cell, ax):
         stg = self.stg_dict[cell]
@@ -228,12 +237,12 @@ class SheafFigure(ParameterComplexFigure):
 
         if self.prune_grad == 'all' or (self.prune_grad == 'some' 
                                         and cell.dim == self.dim):
-            plot_stg(stg, morse_nodes=self.morse_nodes[cell], 
+            plot_stg(stg, morse_sets=self.section_dict[cell], 
                      plot_bdry_cells=self.plot_bdry_cells, 
                      prune_grad=True, ax=ax, label=label, 
                      figsize=self.figsize)
         else:
-            plot_stg(stg, morse_nodes=self.morse_nodes[cell],
+            plot_stg(stg, morse_sets=self.section_dict[cell],
                      plot_bdry_cells=self.plot_bdry_cells, 
                      prune_grad=False, ax=ax, label=label, 
                      figsize = self.figsize)
@@ -243,7 +252,7 @@ class SheafFigure(ParameterComplexFigure):
             rank = sum(len(self.shf.stalk(cell)) 
                        for cell in self.shf.grading[0])
             section = galois.GF2([1 for i in range(rank)])
-        self.build_morse_nodes(section)
+        self.build_section_dict(section)
         super().plot(fname)
     
     def __init__(self, shf, stg_dict, parameter_graph=None, columns=3):

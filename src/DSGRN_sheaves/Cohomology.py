@@ -4,23 +4,25 @@
 ### Based on code by Jeremy Kun: 
 ### http://jeremykun.com/2013/04/10/computing-homology/
 
-import numpy
-import galois
+import numpy as np
 
 def cohomology(D, E):
-    """ Inputs two matrices D, E with D*E=0. Outputs a linearly independent set
-        of vectors in ker D which form a basis for ker D / img E under the 
-        quotient map"""
+    """ Inputs two matrices D, E with D*E=0. 
+
+        Outputs a list of vectors in ker D which forms a basis for 
+        ker D / img E under the quotient map.
+        """
     
     A, B, Q = simultaneous_reduce(D, E)
     B_pivot_rows = [i for i in range(B.shape[0]) 
-                    if not numpy.all(B[i, :] == 0*B[i, :])]
-    B_reduced = B[B_pivot_rows, :].copy().transpose().row_reduce()
+                    if not np.all(B[i, :] == 0*B[i, :])]
+    # row_reduce available in galois not numpy, may need to change
+    B_reduced = B[B_pivot_rows, :].transpose().row_reduce()
     B_reduced_rows = []
     
     j = 0
     for i in range(B_reduced.shape[0]):
-        while j < B_reduced.shape[1] and B_reduced[i,j]!=1:
+        while j < B_reduced.shape[1] and B_reduced[i, j] != 1:
             j += 1
         if j == B_reduced.shape[1]:
             break
@@ -29,7 +31,7 @@ def cohomology(D, E):
             
     B_span_rows = [B_pivot_rows[i] for i in B_reduced_rows]
     A_zero_cols = [j for j in range(A.shape[1]) 
-                   if numpy.all(A[:, j] == 0*A[:, j])]
+                   if np.all(A[:, j] == 0*A[:, j])]
     generators = [Q[:, i] for i in A_zero_cols if i not in B_span_rows]
     
     return generators
@@ -57,12 +59,21 @@ def col_combine(A, add_to, col_scale, scale_amt):
     A[:, add_to] = A[:, add_to] + scale_amt*A[:, col_scale]
     
 def simultaneous_reduce(C, D):
+    """ Inputs two matrices C, D such that the number of columns of C equals 
+        the number of rows of D. 
+        
+        Outputs three matrices:
+        - A, the result of column reduction on C
+        - B, the corresponding row reduction of B
+        - Q, an invertible matrix such that CQ = A
+    """
+
+    if C.shape[1] != D.shape[0]:
+        raise Exception("Matrices have the wrong shape.")
+
     A = C.copy()
     B = D.copy()
-    
-    if A.shape[1] != B.shape[0]:
-        raise Exception("Matrices have the wrong shape.")
-        
+    # Initialize identity matrix (works for both np and galois)
     Q = A.copy()
     Q.resize(A.shape[1],A.shape[1])
     Q = Q*0
@@ -70,7 +81,6 @@ def simultaneous_reduce(C, D):
         Q[i,i] = 1
 
     num_rows, num_cols = A.shape
-
     i = 0
     j = 0
     while True:

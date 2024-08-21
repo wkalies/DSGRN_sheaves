@@ -1,6 +1,6 @@
 ### Attractors.py
 ### MIT LICENSE 2024 Alex Dowling
-###############################################################################
+
 import itertools
 import numpy as np
 import pychomp
@@ -8,7 +8,7 @@ import DSGRN_utils
 
 from .Sheaf import *
 
-def morse_dictionary(parameter_complex, stg_dict, prune_grad='none'):
+def build_morse_dict(parameter_complex, stg_dict, prune_grad='none'):
     dim = max(cell.dim for cell in parameter_complex.vertices())
     morse_dict = {}
     for cell in parameter_complex.vertices():
@@ -25,22 +25,22 @@ def morse_dictionary(parameter_complex, stg_dict, prune_grad='none'):
         morse_dict.update({cell : morse_graph})
     return morse_dict
 
-def morse_sets_in_section(shf, morse_dict, section):
+def morse_nodes_from_section(shf, morse_dict, section):
     n = 0
-    section_morse_sets = {}
-    for key in shf.grading[0]:
-        m = len(shf.stalk(key))
-        stalk_list = [v for v in morse_dict[key].vertices()]
-        stalk_sets = [stalk_list[i] for i in range(m) if section[n+i] != 0]
-        section_morse_sets.update({key : stalk_sets})
-        n = n+m
-    return section_morse_sets
+    section_morse_nodes = {}
+    for cell in shf.grading[0]:
+        m = len(shf.stalk(cell))
+        stalk_list = list(morse_dict[cell].vertices())
+        stalk_nodes = [stalk_list[i] for i in range(m) if section[n+i] != 0]
+        section_morse_nodes.update({cell : stalk_nodes})
+        n = n + m
+    return section_morse_nodes
 
-def section_from_morse_sets(shf, section_morse_sets):
+def section_from_morse_nodes(shf, section_morse_sets):
     section = []
-    for key in shf.grading[0]:
-        section = section + [int(M in section_morse_sets[key]) 
-                             for M in shf.stalk(key)]
+    for cell in shf.grading[0]:
+        section = section + [int(M in section_morse_sets[cell]) 
+                             for M in shf.stalk(cell)]
     return shf.GF(section)
 
 def attractor_sections(shf, morse_dict, shf_cohomology=None):
@@ -51,17 +51,15 @@ def attractor_sections(shf, morse_dict, shf_cohomology=None):
     zero_sec = 0*sections[0]
 
     for c in itertools.product(*[[0, 1] for s in sections]):
-        add = True
         section = sum([cv*sec for cv, sec in zip(c, sections)], zero_sec)
-        mss = morse_sets_in_section(shf, morse_dict, section)
-        for key in shf.grading[0]:
-            selected = mss[key]
-            P = pychomp.Poset(morse_dict[key])
-            if set(mss[key]) != set(mss[key]).union(*[set(P.descendants(m)) 
-                                                      for m in mss[key]]):
-                add = False
+        morse_nodes = morse_nodes_from_section(shf, morse_dict, section)
+        for cell in shf.grading[0]:
+            selected = morse_nodes[cell]
+            P = pychomp.Poset(morse_dict[cell])
+            if set(morse_nodes[cell]) != set(morse_nodes[cell]).union(*[set(P.descendants(m)) 
+                                                      for m in morse_nodes[cell]]):
                 break
-        if add:
+        else:
             att_secs.add_vertex(tuple([int(s==1) for s in section]))
 
     for s1, s2 in itertools.combinations(att_secs.vertices(), 2):

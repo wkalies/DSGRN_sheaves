@@ -5,6 +5,12 @@ import DSGRN
 import itertools
 
 class CechCell:
+    """ Class for storing and manipulating sets of inequalities which define  
+        open sets in a Cech complex.
+
+        Initialized with a tuple of frozensets of tuples, and the dimension of 
+        the cell.
+    """
 
     def __init__(self, inequality_sets, dim, labels=None):
         self.inequality_sets = inequality_sets
@@ -18,27 +24,34 @@ class CechCell:
         return self.inequality_sets[item]
 
     def __str__(self):
+        # Display dimension of cell
         ineq_strings = [f'cell dimension: {self.dim}\n']
         if self.labels:
             labels = self.labels
         else:
             labels = ['' for ineqs in self]
+        # Format inequality sets into a string
         for ineqs, label in zip(self, labels):
             if self.labels: ineq_strings.extend([label, " : "])
             ineq_strings.append("{")
             for ineq in ineqs:
                 ineq_strings.extend([str(ineq).replace("'",""), ", "])
+            # Add line break for each dimension in parameter graph
             ineq_strings[-1] = "}\n"
         ineq_strings[-1] = "}"
         return ''.join(ineq_strings)
 
     def __eq__(self, other):
+        # Equality between two CechCells is determined by comparing their 
+        # inequality sets and their dimensions
         if not isinstance(other, CechCell):
             return False
         return (self.inequality_sets == other.inequality_sets 
                 and self.dim == other.dim)
 
     def __hash__(self):
+        # The hash of a CechCell is determined by its inequality sets 
+        # and its dimension
         return hash(self.inequality_sets + (self.dim,))
 
     def permute(self):
@@ -84,11 +97,20 @@ class CechCell:
         return list(map(index, partial_orders))
 
 def top_cech_cell(parameter_graph, index, dim=None):
-    lines = parameter_graph.parameter(index).partialorders().split("\n")
+    """ Factory method for building CechCell object.
+        Inputs a DSGRN parameter graph, a parameter index, 
+        and an optional dimension argument.
+
+        Outputs a top dimensional CechCell corresponding to the given 
+        parameter index.
+    """
+
     if dim is None:
         dim = parameter_graph.dimension()
+    # Get string with partial order data using .partialorders()
+    lines = parameter_graph.parameter(index).partialorders().split("\n")
     colons = [line.index(":") for line in lines]
-    
+    # Manipulate string into a tuple of frozensets
     inequality_sets = tuple(frozenset({tuple(line[i+3:-1].split(", "))})
                             for line, i in zip(lines, colons))
     labels = tuple(line[:i-1] for line, i in zip(lines, colons))
