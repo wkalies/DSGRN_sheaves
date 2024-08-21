@@ -13,12 +13,4 @@ from .ParameterComplexFigure import *
 from .Attractors import *
 from .CechCell import *
 
-from .Queries.BifurcationQuery import *
-from .Queries.CuspQuery import *
-from .Queries.GeneralHysteresisQuery import *
-from .Queries.HysteresisQuery import *
-from .Queries.IsolaLoopQuery import *
-from .Queries.IsolaQuery import *
-from .Queries.PitchforkQuery import *
-from .Queries.SaddleNodeQuery import *
-from .Queries.SwallowtailQuery import *
+from Queries import *
