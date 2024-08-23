@@ -55,6 +55,7 @@ class CechCell:
         return hash(self.inequality_sets + (self.dim,))
 
     def permute(self):
+        # Close the inequality sets under permutation
         if all([len(ineqs) < 3 for ineqs in self]): return self
         new_inequality_sets = []
         for ineqs in self:
@@ -67,6 +68,8 @@ class CechCell:
         return CechCell(tuple(new_inequality_sets), self.dim, self.labels)
 
     def join(self, others, dim=None):
+        # Make a new CechCell by combining the inequality sets with those of a 
+        # list of other cells
         if dim is None:
             dim = self.dim - len(others)
         if not others: return self

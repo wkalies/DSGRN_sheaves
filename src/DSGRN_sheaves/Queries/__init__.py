@@ -1,3 +1,6 @@
+### __init__.py
+### MIT LICENSE 2024 Alex Dowling
+
 from .BifurcationQuery import *
 from .CuspQuery import *
 from .GeneralHysteresisQuery import *
