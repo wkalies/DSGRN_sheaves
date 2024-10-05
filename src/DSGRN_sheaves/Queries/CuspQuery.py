@@ -14,7 +14,7 @@ class CuspQuery(BifurcationQuery):
                           'predicate' : lambda sc : len(sc[0]) == 1,
                           'dim' : 1,
                           'clean_stalks' : True,
-                          'prude_grad' : 'all'
+                          'prune_grad' : 'all'
                          }]
         
         super().__init__(parameter_graph, vertices, edges, 

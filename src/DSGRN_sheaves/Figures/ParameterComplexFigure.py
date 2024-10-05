@@ -47,7 +47,7 @@ def plot_stg(stg, morse_sets=None, plot_bdry_cells=True, prune_grad=True,
 class ParameterComplexFigure:
 
     def set_defaults(self):
-        self.prune_grad = 'none'
+        self.prune_grad = 'all'
         self.plot_bdry_cells = True
         self.figsize = (8,8)
         self.labels = True
