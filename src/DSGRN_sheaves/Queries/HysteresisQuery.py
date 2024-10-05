@@ -14,7 +14,8 @@ class HysteresisQuery(BifurcationQuery):
         edges = [('a','b'), ('b','c'), ('c', 'd')]
         match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
         coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 1,
+                          # 'predicate' : lambda sc : len(sc[0]) == 1,
+                          'predicate' : lambda sc : len(sc[0]) == 2,
                           'dim' : 1,
                           'clean_stalks' : True
                          }]    
