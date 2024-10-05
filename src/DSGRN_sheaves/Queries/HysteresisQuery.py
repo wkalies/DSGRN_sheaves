@@ -7,9 +7,12 @@ class HysteresisQuery(BifurcationQuery):
         if param_stability is None:
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
         
-        vertices = ['a','b','c']
-        edges = [('a','b'), ('b','c')]
-        match_grading = {1 : ['a','c'], 2 : ['b']}
+        # vertices = ['a','b','c']
+        # edges = [('a','b'), ('b','c')]
+        # match_grading = {1 : ['a','c'], 2 : ['b']}
+        vertices = ['a','b','c', 'd']
+        edges = [('a','b'), ('b','c'), ('c', 'd')]
+        match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
         coho_criteria = [{
                           'predicate' : lambda sc : len(sc[0]) == 1,
                           'dim' : 1,
