@@ -36,11 +36,11 @@ class HysteresisQuery(BifurcationQuery):
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
-                             {'selection' : ['b'+str(num_bistable_nodes),'c'], 
-                              'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
-                              'dim' : 1,
-                              'clean_stalks' : True
-                             }, 
+                             # {'selection' : ['b'+str(num_bistable_nodes),'c'], 
+                             #  'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
+                             #  'dim' : 1,
+                             #  'clean_stalks' : True
+                             # }, 
                              {
                               'predicate' : lambda sc : len(sc[0]) == 1, # hysteresis
                               'dim' : 1,
