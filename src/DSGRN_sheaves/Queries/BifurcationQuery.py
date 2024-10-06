@@ -79,7 +79,7 @@ class Node:
         self.val = key
         self.children = []
 
-def matching(parameter_graph, G, param_grading, match_grading, symmetry=False):
+def matching(parameter_graph, G, param_grading, match_grading, symmetry=False, ppath=None):
     """ Given a parameter graph and a match graph, finds all subgraphs of the 
         parameter graph isomorphic to the match graph. These isomorphisms must
         respect the grading dictionaries. 
@@ -130,16 +130,20 @@ def matching(parameter_graph, G, param_grading, match_grading, symmetry=False):
             root.children.pop(0)
         if depth == n - 1:
             valid_paths.append(path)
-    
-    traverse_search_tree(root, -1, [])
-    
-    if not symmetry:
-        valid_sets = {frozenset(path):path for path in valid_paths}
-        valid_paths = list(valid_sets.values())
 
-    stop = time()
-    print(f"Graph matching took {stop-start:.2f} seconds. "\
-          f"Found {len(valid_paths)} graph matches.")
+    if ppaths!=None:
+        valid_paths=[ppath]
+    else:
+        traverse_search_tree(root, -1, [])
+    
+        if not symmetry:
+            valid_sets = {frozenset(path):path for path in valid_paths}
+            valid_paths = list(valid_sets.values())
+    
+        stop = time()
+        print(f"Graph matching took {stop-start:.2f} seconds. "\
+              f"Found {len(valid_paths)} graph matches.")
+        
     return valid_paths, ordering
 
 def select_from_match(match, selection, ordering):
