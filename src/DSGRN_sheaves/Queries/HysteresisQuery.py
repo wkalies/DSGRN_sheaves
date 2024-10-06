@@ -31,12 +31,12 @@ class HysteresisQuery(BifurcationQuery):
 
         if SN_check:
             coho_criteria = [
-                             {'selection' : selection_SN_left, # ['a','b']
+                             {'selection' : ['a','b1'], 
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
-                             {'selection' : selection_SN_right, # ['b','c']
+                             {'selection' : ['b'+str(num_bistable_nodes),'c'], 
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
