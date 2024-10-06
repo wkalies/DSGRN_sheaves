@@ -248,8 +248,8 @@ class BifurcationQuery:
             if clean:
                 shf = clean_stalks(shf)
             shf_cohomology = sheaf_cohomology(shf)
-            print(criteria)
-            print(shf_cohomology)
+            # print(criteria)
+            # print(shf_cohomology)
             cohomologies.append(shf_cohomology)
             
             # Check whether or not the cohomology groups satisfy the predicate
