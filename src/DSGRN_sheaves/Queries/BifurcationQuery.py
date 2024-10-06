@@ -131,7 +131,7 @@ def matching(parameter_graph, G, param_grading, match_grading, symmetry=False, p
         if depth == n - 1:
             valid_paths.append(path)
 
-    if ppaths!=None:
+    if ppath!=None:
         valid_paths=[ppath]
     else:
         traverse_search_tree(root, -1, [])
