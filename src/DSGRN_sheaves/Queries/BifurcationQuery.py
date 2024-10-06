@@ -230,7 +230,7 @@ class BifurcationQuery:
                     break
             # Get settings from criteria
             selection = criteria.get('selection', 
-                                     [v[0] for v in self.match_graph.vertices])
+                                     [v for v in self.match_graph.vertices])
             indices = [match[i] for i in range(len(match)) 
                                     if self.ordering[i][0] in selection]
             predicate = criteria.get('predicate', lambda sc : True)
