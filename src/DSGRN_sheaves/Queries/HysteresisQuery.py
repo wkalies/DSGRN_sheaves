@@ -3,7 +3,7 @@ from .BifurcationQuery import *
 
 class HysteresisQuery(BifurcationQuery):
 
-    def __init__(self, parameter_graph, param_stability=None,SN_check=True):
+    def __init__(self, parameter_graph, param_stability=None,SN_check=True,num_bistable_nodes=1):
         if param_stability is None:
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
 
@@ -14,12 +14,12 @@ class HysteresisQuery(BifurcationQuery):
 
         vertices = ['a','b1']
         edges = [('a','b1')]
-        for i in range(2,len_bistable_parameter_nodes+1):
+        for i in range(2,num_bistable_nodes+1):
             vertices.append('b'+str(i))
             edges.append(('b'+str(i-1),'b'+str(i)))
         vertices.append('c')
-        edges.append(('b'+str(len_bistable_parameter_nodes),'c'))
-        bistable_vertices=vertices[1:len_bistable_parameter_nodes+1]
+        edges.append(('b'+str(num_bistable_nodes),'c'))
+        bistable_vertices=vertices[1:num_bistable_nodes+1]
         selection_SN_left=['a','b1']
         selection_SN_right=[bistable_vertices[-1],'c']
         
