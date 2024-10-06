@@ -12,6 +12,17 @@ class HysteresisQuery(BifurcationQuery):
         edges = [('a','b'), ('b','c')]
         match_grading = {1 : ['a','c'], 2 : ['b']}
 
+        vertices = ['a','b1']
+        edges = [('a','b1')]
+        for i in range(2,len_bistable_parameter_nodes+1):
+            vertices.append('b'+str(i))
+            edges.append(('b'+str(i-1),'b'+str(i)))
+        vertices.append('c')
+        edges.append(('b'+str(len_bistable_parameter_nodes),'c'))
+        bistable_vertices=vertices[1:len_bistable_parameter_nodes+1]
+        selection_SN_left=['a','b1']
+        selection_SN_right=[bistable_vertices[-1],'c']
+        
         # ** TWO BISTABLE PARAMETER NODES **
         # vertices = ['a','b','c', 'd']
         # edges = [('a','b'), ('b','c'), ('c', 'd')]
@@ -19,12 +30,12 @@ class HysteresisQuery(BifurcationQuery):
 
         if SN_check:
             coho_criteria = [
-                             {'selection' : ['a','b'],
+                             {'selection' : selection_SN_left, # ['a','b']
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
-                             {'selection' : ['b','c'],
+                             {'selection' : selection_SN_right, # ['b','c']
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
