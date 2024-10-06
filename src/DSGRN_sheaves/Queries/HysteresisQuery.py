@@ -29,18 +29,18 @@ class HysteresisQuery(BifurcationQuery):
         # selection_SN_left=['a','b1']
         # selection_SN_right=[bistable_vertices[-1],'c']
 
-        vertices = ['a','b1','c']
-        edges = [('a','b1'), ('b1','c')]
-        match_grading = {1 : ['a','c'], 2 : ['b1']}
+        vertices = ['a','b','c']
+        edges = [('a','b'), ('b','c')]
+        match_grading = {1 : ['a','c'], 2 : ['b']}
         
         if SN_check:
             coho_criteria = [
-                             {'selection' : ['a','b1'], 
+                             {'selection' : ['a','b'], 
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
-                             {'selection' : ['b1','c'], 
+                             {'selection' : ['b','c'], 
                               'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
                               'dim' : 1,
                               'clean_stalks' : True
