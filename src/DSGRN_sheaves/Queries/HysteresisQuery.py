@@ -6,16 +6,20 @@ class HysteresisQuery(BifurcationQuery):
     def __init__(self, parameter_graph, param_stability=None):
         if param_stability is None:
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
+
+        # ** ONE BISTABLE PARAMETER NODE **
+        vertices = ['a','b','c']
+        edges = [('a','b'), ('b','c')]
+        match_grading = {1 : ['a','c'], 2 : ['b']}
+
+        # ** TWO BISTABLE PARAMETER NODES **
+        # vertices = ['a','b','c', 'd']
+        # edges = [('a','b'), ('b','c'), ('c', 'd')]
+        # match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
         
-        # vertices = ['a','b','c']
-        # edges = [('a','b'), ('b','c')]
-        # match_grading = {1 : ['a','c'], 2 : ['b']}
-        vertices = ['a','b','c', 'd']
-        edges = [('a','b'), ('b','c'), ('c', 'd')]
-        match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
         coho_criteria = [{
-                          # 'predicate' : lambda sc : len(sc[0]) == 1,
-                          'predicate' : lambda sc : len(sc[0]) == 2,
+                          'predicate' : lambda sc : len(sc[0]) == 1, #hysteresis
+                          #'predicate' : lambda sc : len(sc[0]) == 2, #isola
                           'dim' : 1,
                           'clean_stalks' : True
                          }]    
