@@ -9,7 +9,7 @@ from numpy import array
 import matplotlib
 import matplotlib.pyplot as plt
 
-def plot_stg(stg, morse_sets=None, plot_bdry_cells=True, prune_grad=True,
+def plot_stg(stg, morse_sets=None, plot_bdry_cells=True, prune_grad=False,
              ax=None, label=None, figsize=(7,7), fname=None, visible=True):
     """ Inputs a CubicalBlowupGraph object. 
     
@@ -47,7 +47,7 @@ def plot_stg(stg, morse_sets=None, plot_bdry_cells=True, prune_grad=True,
 class ParameterComplexFigure:
 
     def set_defaults(self):
-        self.prune_grad = 'all'
+        self.prune_grad = 'none'
         self.plot_bdry_cells = True
         self.figsize = (8,8)
         self.labels = True
