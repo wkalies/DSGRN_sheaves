@@ -3,7 +3,7 @@ from .BifurcationQuery import *
 
 class IsolaQuery(BifurcationQuery):
 
-    def __init__(self, parameter_graph, param_stability=None,SN_check=True):
+    def __init__(self, parameter_graph, param_stability=None,SN_check=True,ppath=None):
         if param_stability is None:
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
         
@@ -37,4 +37,4 @@ class IsolaQuery(BifurcationQuery):
                              }]    
         
         super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria)
+                         param_stability, match_grading, coho_criteria,ppath=ppath)
