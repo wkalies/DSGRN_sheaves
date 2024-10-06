@@ -147,6 +147,7 @@ def matching(parameter_graph, G, param_grading, match_grading, ppath, symmetry=F
     return valid_paths, ordering
 
 def select_from_match(match, selection, ordering):
+    print('ordering:', ordering)
     return [match[i] for i in range(len(match)) if ordering[i][0] in selection]
 
 class BifurcationQuery:
