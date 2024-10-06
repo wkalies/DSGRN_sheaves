@@ -8,9 +8,9 @@ class HysteresisQuery(BifurcationQuery):
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
 
         # ** ONE BISTABLE PARAMETER NODE **
-        vertices = ['a','b','c']
-        edges = [('a','b'), ('b','c')]
-        match_grading = {1 : ['a','c'], 2 : ['b']}
+        # vertices = ['a','b','c']
+        # edges = [('a','b'), ('b','c')]
+        # match_grading = {1 : ['a','c'], 2 : ['b']}
 
         vertices = ['a','b1']
         edges = [('a','b1')]
@@ -20,6 +20,7 @@ class HysteresisQuery(BifurcationQuery):
         vertices.append('c')
         edges.append(('b'+str(num_bistable_nodes),'c'))
         bistable_vertices=vertices[1:num_bistable_nodes+1]
+        match_grading = {1 : ['a','c'], 2 : bistable_vertices}
         selection_SN_left=['a','b1']
         selection_SN_right=[bistable_vertices[-1],'c']
         
