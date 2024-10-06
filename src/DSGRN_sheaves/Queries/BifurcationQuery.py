@@ -79,7 +79,7 @@ class Node:
         self.val = key
         self.children = []
 
-def matching(parameter_graph, G, param_grading, match_grading, symmetry=False, ppath=None):
+def matching(parameter_graph, G, param_grading, match_grading, ppath, symmetry=False):
     """ Given a parameter graph and a match graph, finds all subgraphs of the 
         parameter graph isomorphic to the match graph. These isomorphisms must
         respect the grading dictionaries. 
@@ -261,7 +261,8 @@ class BifurcationQuery:
         self.shape_matches, self.ordering = matching(self.parameter_graph,
                                                      self.match_graph,
                                                      self.param_grading,
-                                                     self.match_grading)
+                                                     self.match_grading,
+                                                     self.ppath)
 
     def execute(self):
         """ Returns all subgraphs of the parameter graph which are isomorphic
@@ -347,7 +348,7 @@ class BifurcationQuery:
 
     def __init__(self, parameter_graph, vertices, edges, param_grading={}, 
                  match_grading={}, coho_criteria=[], cap=inf, 
-                 shape_matches=None, ordering=None):
+                 shape_matches=None, ordering=None, ppath=None):
         
             self.parameter_graph = parameter_graph
             self.assemble_grading(param_grading)
@@ -356,3 +357,4 @@ class BifurcationQuery:
             self.cap = cap
             self.shape_matches = shape_matches
             self.ordering = ordering
+            self.ppath = ppath
