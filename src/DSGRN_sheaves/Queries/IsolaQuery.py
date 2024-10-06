@@ -11,16 +11,16 @@ class IsolaQuery(BifurcationQuery):
         edges = [('a','b'), ('b','c')]
         match_grading = {1 : ['a','c'], 2 : ['b']}
         coho_criteria = [
-                         {'selection' : ['a','b'],
-                          'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }, 
-                         {'selection' : ['b','c'],
-                          'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
-                          'dim' : 1,
-                          'clean_stalks' : True
-                         }, 
+                         # {'selection' : ['a','b'],
+                         #  'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
+                         #  'dim' : 1,
+                         #  'clean_stalks' : True
+                         # }, 
+                         # {'selection' : ['b','c'],
+                         #  'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
+                         #  'dim' : 1,
+                         #  'clean_stalks' : True
+                         # }, 
                          {
                           'predicate' : lambda sc : len(sc[0]) == 2,
                           'dim' : 1,
