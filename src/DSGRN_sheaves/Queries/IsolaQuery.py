@@ -37,4 +37,4 @@ class IsolaQuery(BifurcationQuery):
                              }]    
         
         super().__init__(parameter_graph, vertices, edges, 
-                         param_stability, match_grading, coho_criteria,ppath=ppath)
+                         param_stability, match_grading, coho_criteria, ppath=ppath)
