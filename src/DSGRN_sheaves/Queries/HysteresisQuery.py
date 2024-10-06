@@ -17,11 +17,18 @@ class HysteresisQuery(BifurcationQuery):
         # edges = [('a','b'), ('b','c'), ('c', 'd')]
         # match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
         
-        coho_criteria = [{
-                          'predicate' : lambda sc : len(sc[0]) == 1, #hysteresis
-                          #'predicate' : lambda sc : len(sc[0]) == 2, #isola
+        coho_criteria = [
+                         {'selection' : ['a','b'],
+                          'predicate' : lambda sc : len(sc[0]) == 2 # SN                       
                           'dim' : 1,
                           'clean_stalks' : True
-                         }]    
+                         }, 
+                         {
+                          'predicate' : lambda sc : len(sc[0]) == 1, # hysteresis
+                          #'predicate' : lambda sc : len(sc[0]) == 2, # isola
+                          'dim' : 1,
+                          'clean_stalks' : True
+                         }
+                        ]    
         super().__init__(parameter_graph, vertices, edges, 
                          param_stability, match_grading, coho_criteria)
