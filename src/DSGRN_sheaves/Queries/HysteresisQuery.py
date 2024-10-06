@@ -12,6 +12,11 @@ class HysteresisQuery(BifurcationQuery):
         # edges = [('a','b'), ('b','c')]
         # match_grading = {1 : ['a','c'], 2 : ['b']}
 
+        # ** TWO BISTABLE PARAMETER NODES **
+        # vertices = ['a','b','c', 'd']
+        # edges = [('a','b'), ('b','c'), ('c', 'd')]
+        # match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
+
         vertices = ['a','b1']
         edges = [('a','b1')]
         for i in range(2,num_bistable_nodes+1):
@@ -23,11 +28,6 @@ class HysteresisQuery(BifurcationQuery):
         match_grading = {1 : ['a','c'], 2 : bistable_vertices}
         selection_SN_left=['a','b1']
         selection_SN_right=[bistable_vertices[-1],'c']
-        
-        # ** TWO BISTABLE PARAMETER NODES **
-        # vertices = ['a','b','c', 'd']
-        # edges = [('a','b'), ('b','c'), ('c', 'd')]
-        # match_grading = {1 : ['a','d'], 2 : ['b', 'c']}
 
         if SN_check:
             coho_criteria = [
