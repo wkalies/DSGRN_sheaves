@@ -231,8 +231,10 @@ class BifurcationQuery:
             # Get settings from criteria
             selection = criteria.get('selection', 
                                      [v for v in self.match_graph.vertices])
+            print('selection:', selection)
             indices = [match[i] for i in range(len(match)) 
                                     if self.ordering[i][0] in selection]
+            print('indices:', indices)
             predicate = criteria.get('predicate', lambda sc : True)
             dim = criteria.get('dim', self.parameter_graph.dimension())
             length_cap = criteria.get('length_cap', 2)
