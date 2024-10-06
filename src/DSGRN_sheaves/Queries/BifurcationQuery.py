@@ -286,6 +286,9 @@ class BifurcationQuery:
             
             # check if it satisfies the query's criteria
             check, cohomologies = self.check_cohomology(match)
+
+            print("check ",cohomologies)
+            
             # If it does, add it to the list of matches
             if check:
                 self.matches.append(match)
