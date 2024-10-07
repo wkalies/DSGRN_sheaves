@@ -26,8 +26,6 @@ class HysteresisQuery(BifurcationQuery):
         edges.append(('b'+str(num_bistable_nodes),'c'))
         bistable_vertices=vertices[1:num_bistable_nodes+1]
         match_grading = {1 : ['a','c'], 2 : bistable_vertices}
-        selection_SN_left=['a','b1']
-        selection_SN_right=[bistable_vertices[-1],'c']
         
         if SN_check:
             coho_criteria = [
