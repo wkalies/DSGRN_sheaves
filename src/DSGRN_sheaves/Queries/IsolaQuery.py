@@ -3,7 +3,7 @@ from .BifurcationQuery import *
 
 class IsolaQuery(BifurcationQuery):
 
-    def __init__(self, parameter_graph, param_stability=None,SN_check=True,num_bistable_nodes=1,ppath=None):
+    def __init__(self, parameter_graph, param_stability=None, SN_check=True, num_bistable_nodes=1, SN_SC=[2,2], ppath=None):
         if param_stability is None:
             param_stability = DSGRN_utils.StabilityQuery(parameter_graph.network())
         
@@ -24,12 +24,12 @@ class IsolaQuery(BifurcationQuery):
         if SN_check:
             coho_criteria = [
                              {'selection' : ['a','b1'],
-                              'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
+                              'predicate' : lambda sc : len(sc[0]) == SN_SC[0], # 2 SN                       
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
                              {'selection' : ['b'+str(num_bistable_nodes),'c'],
-                              'predicate' : lambda sc : len(sc[0]) == 2, # SN                       
+                              'predicate' : lambda sc : len(sc[0]) == SN_SC[1], # 2 SN                       
                               'dim' : 1,
                               'clean_stalks' : True
                              }, 
